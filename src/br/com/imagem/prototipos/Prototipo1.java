@@ -72,7 +72,7 @@ public class Prototipo1 {
 	static File f9  = new File("/home/hal9000/Pictures/ReconhecimentoFacial/editada/foto18.jpg");
 	static File f10 = new File("/home/hal9000/Pictures/ReconhecimentoFacial/editada/foto20.jpg");
 	
-	static File fotoTeste = new File("/home/hal9000/Pictures/ReconhecimentoFacial/editada/car.jpg");
+	static File fotoTeste = new File("/home/hal9000/Pictures/ReconhecimentoFacial/editada/foto20.jpg");
 
 	public static void main(String[] args) throws IOException {
 		
@@ -143,28 +143,29 @@ public class Prototipo1 {
 		Matrix media_local = new Matrix(media);//10000 x 1
 		//obtencao da matrix da foto a ser analisada
 		Matrix matriz_teste = new Matrix(matrizPrincipal_procurada);//10000 x 1 
+		
 		Matrix assinatura_local = media_local.minus(matriz_teste);//10000 x 1
-		Matrix eigenfaceTransposta_local = new Matrix(eigenfaceTransposta);
-		Matrix matriz_peso_foto_procurada = eigenfaceTransposta_local.times(assinatura_local); //10 x 1		
+		//Matrix eigenfaceTransposta_local = new Matrix(eigenfaceTransposta);
+		//Matrix matriz_peso_foto_procurada = eigenfaceTransposta_local.times(assinatura_local); //10 x 1		
 		//---------------------------------------
 		Matrix assinaturas                 = new Matrix(matrizAssinatura); //10000x10
-		Matrix matrix_eigenface_transposta = new Matrix(eigenfaceTransposta);//10x10000
-		Matrix matriz_peso = matrix_eigenface_transposta.times(assinaturas);//10x10
+//		Matrix matrix_eigenface_transposta = new Matrix(eigenfaceTransposta);//10x10000
+//		Matrix matriz_peso = matrix_eigenface_transposta.times(assinaturas);//10x10
 
 //		Matrix assinatura_geral = new Matrix(matrizAssinatura); //10000 x 10
 		//Matrix matrix_eigenface_transposta = new Matrix(eigenfaceTransposta); //10 x 10000
 		//Matrix matriz_peso = matrix_eigenface_transposta.times(assinaturas); //10 x 10
 		//System.out.println(matriz_peso.getRowDimension()+"--"+matriz_peso.getColumnDimension());
 		
+		double dist = 0;
 		for (int i = 1; i < NUMERO_FOTOS; i++) {
-			double dist = 0;
 			//Matrix matrix1 = assinatura_local.getMatrix(0, 9, 0, 0);
-			Matrix matrix2 = matriz_peso.getMatrix(0, NUMERO_FOTOS - 1, i-1, i-1);
+			Matrix matrix2 = assinaturas.getMatrix(0, NUMERO_LINHAS - 1, i-1, i-1);
 
-			Matrix diferenca = matriz_peso_foto_procurada.minus(matrix2).arrayRightDivide(matrix2);
+			Matrix diferenca = assinatura_local.minus(matrix2);
 			
 			
-			for (int j = 0; j < NUMERO_FOTOS; j++) {
+			for (int j = 0; j < NUMERO_LINHAS; j++) {
 				dist += Math.pow(diferenca.get(j, 0), 2);
 				//System.out.println(minus.get(j, 0));
 			}
@@ -172,14 +173,14 @@ public class Prototipo1 {
 			//dist += Math.pow(distanciaEncontrada[k][0], 2); 
 			//System.out.println("--quadrado>"+dist);
 			//System.out.println("+++"+minus.getArray());
-			double sqrt = Math.sqrt(dist);
-			if(sqrt > threshold) {
-				System.out.println("IMAGEM PERTENCE AO GRUPO!!");
-			} else {
-				System.out.println("IMAGEM NAO PERTENCE AO GRUPO!!");
-			}
-			//listaDistanciasTreinamento.add(sqrt);
 		}
+		double sqrt = Math.sqrt(dist);
+		if(sqrt < threshold) {
+			System.out.println("IMAGEM É UM FACE!");
+		} else {
+			System.out.println("IMAGEM NAO É UMA FACE!");
+		}
+		//listaDistanciasTreinamento.add(sqrt);
 
 	}
 
@@ -276,7 +277,7 @@ public class Prototipo1 {
 						Matrix matrixDePesoPrincipal = eigenfaceTransposta_.times(matrixAssinatura_);
 						matrixDePesoPrincipalArray = matrixDePesoPrincipal.getArray();//10x10
 						
-						
+						remontarFoto(matrixAssinatura_.getMatrix(0, NUMERO_FOTOS-1, 0, 0).getArray());
 					
 						System.out.println("FIM DA FASE TREINAMENTO!!!");
 	}
@@ -429,4 +430,51 @@ public class Prototipo1 {
 
 		}
 	}
+	
+	public static void remontarFoto(double[][] foto2) {
+		int m = 0;
+		int width = TAMANHO;
+		int height = TAMANHO;
+		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+		
+		double[][] foto = renormalizePhoto(foto2);
+		
+		
+		for (int k = 0; k < TAMANHO; k++) {
+			for (int k2 = 0; k2 < TAMANHO; k2++) {
+				int a2 = ((int)foto[k][k2]>>24) & 0xff; //alpha
+				int r2 = ((int)foto[k][k2]>>16) & 0xff; //red
+				int g2 = ((int)foto[k][k2]>>8) & 0xff; //green
+				int b2 =  ((int)foto[k][k2]) & 0x0ff; //blue
+				int bbb =  (a2<<24) | (r2<<16) | (g2<<8) | b2; //red
+				System.out.println(bbb+"--");
+				image.setRGB(k, k2, bbb);
+			}
+			
+		}
+		File f2 = null;
+		f2 = new File("/home/hal9000/Pictures/treeArray.jpg");
+		try {
+			ImageIO.write(image, "jpg", f2);
+		} catch (IOException e) {
+			System.out.println("Erro ao criar:" + e.getCause());		
+		}
+	}
+	
+	public static double[][] renormalizePhoto(double[][] foto) {
+		int counter = 0;
+		double[][] fotoReturn = new double[TAMANHO][TAMANHO];
+		for (int k = 0; k < TAMANHO; k++) {
+			for (int k2 = 0; k2 < TAMANHO; k2++) {
+				
+				fotoReturn[k][k2] = foto[counter][0];
+				counter++;
+			}
+			
+		}
+		return fotoReturn;
+	}
+	
+	
+	
 }
