@@ -57,7 +57,7 @@ public class ImagemUtils {
 		int NUMERO_LINHAS = matrix.length;
 		int NUMERO_COLUNAS = matrix[0].length;
 
-		double[][] media = new double[NUMERO_LINHAS][NUMERO_COLUNAS];
+		double[][] media = new double[NUMERO_LINHAS][1]; //<--- aqui é 1 pois usamos apenas 1 coluna!
 		try {
 			for (int i = 0; i < NUMERO_LINHAS; i++) {
 				for (int j = 0; j < NUMERO_COLUNAS; j++) {

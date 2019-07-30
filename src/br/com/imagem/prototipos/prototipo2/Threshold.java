@@ -33,7 +33,8 @@ public class Threshold {
 	
 	public static Double encontrarThresholdBaseadoNaLista() {
 		Prototipo2.listaDistanciasTreinamento.forEach(c -> {
-			if(c < Prototipo2.threshold) {
+			
+			if(c < Prototipo2.threshold && c != 0) {
 				Prototipo2.threshold = c;
 				System.out.println("mudou");
 			}
