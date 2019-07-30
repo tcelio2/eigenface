@@ -138,7 +138,7 @@ public class Prototipo2 {
 
 		double[][] array = matrix.plus(matrix2).getArray();
 		//remontarFoto(matrixAssinatura_.getMatrix(0, NUMERO_LINHAS-1, 0, 0).getArray());
-		FotoUtils.remontarFoto(array);
+		//FotoUtils.remontarFoto(array);
 
 		System.out.println("FIM DA FASE TREINAMENTO!!!");
 	}
@@ -151,8 +151,12 @@ public class Prototipo2 {
 		montarMatrixPadrao_verificacao(fotoTeste2, 0);
 		Matrix media_ = new Matrix(media);//10000 x 1
 		//obtencao da matrix da foto a ser analisada
-		Matrix fotoTeste = new Matrix(matrizPrincipal_procurada);//10000 x 1 
-		Matrix assinatura_local = fotoTeste.minus(media_);//10000 x 1
+		Matrix fotoTeste = new Matrix(matrizPrincipal_procurada);//10000 x 1
+		
+		System.out.println(media_.getColumnDimension()+"--"+media_.getRowDimension());
+		System.out.println(fotoTeste.getColumnDimension()+"--"+fotoTeste.getRowDimension());
+		
+		Matrix assinatura_local = fotoTeste.minusEquals(media_);//10000 x 1
 		Matrix eigenfaceTransposta_ = new Matrix(eigenfaceTransposta);
 		Matrix matriz_peso_foto_procurada = eigenfaceTransposta_.times(assinatura_local); //10 x 1 <---
 		

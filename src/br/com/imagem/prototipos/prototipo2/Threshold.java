@@ -15,19 +15,20 @@ public class Threshold {
 				Matrix matriz_peso = matrix_eigenface_transposta.times(assinaturas);//10x10
 				int NUMERO_FOTOS = fotosList.size();
 				
-				for (int i = 1; i < NUMERO_FOTOS; i++) {
+				for (int i = 0; i < NUMERO_FOTOS; i++) {
 					double dist = 0;
-					Matrix matrix1 = matriz_peso.getMatrix(0, NUMERO_FOTOS-1, i, i);
-					Matrix matrix2 = matriz_peso.getMatrix(0, NUMERO_FOTOS-1, i-1, i-1);
-					Matrix minus = matrix2.minus(matrix1);
+					
+					Matrix matrix2 = matriz_peso.getMatrix(0, NUMERO_FOTOS-1, i, i);
 					
 					for (int j = 0; j < NUMERO_FOTOS; j++) {
+						Matrix matrix1 = matriz_peso.getMatrix(0, NUMERO_FOTOS-1, j, j);
+						Matrix minus = matrix2.minus(matrix1);
 						dist += Math.pow(minus.get(j, 0), 2);
+						double sqrt = Math.sqrt(dist);
+						Prototipo2.listaDistanciasTreinamento.add(sqrt);
 					}
-					double sqrt = Math.sqrt(dist);
-					Prototipo2.listaDistanciasTreinamento.add(sqrt);
 				}
-				System.out.println("FIM DA FASE DE ENCONTRAR THRESHOLD==>"+Prototipo2.listaDistanciasTreinamento);
+				System.out.println("FIM DA FASE DE ENCONTRAR THRESHOLD==>"+Prototipo2.listaDistanciasTreinamento+"Tamanho="+Prototipo2.listaDistanciasTreinamento.size());
 	}
 	
 	public static Double encontrarThresholdBaseadoNaLista() {

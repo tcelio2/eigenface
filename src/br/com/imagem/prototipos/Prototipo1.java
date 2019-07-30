@@ -240,7 +240,7 @@ public class Prototipo1 {
 						//AQUI TEMOS O CALCULO DAS EIGENVECTORS
 						Matrix m = new Matrix(covarianceMatrixFinal);
 						EigenvalueDecomposition m2 = m.eig();
-						Matrix eigenvectorMatrix = m2.getD();
+						Matrix eigenvectorMatrix = m2.getV();
 						double[][] eigenvector = eigenvectorMatrix.getArray(); //10x10
 						//EigenvalueDecomposition ei = new EigenvalueDecomposition(m);
 						//Matrix d = ei.getD();
@@ -274,11 +274,19 @@ public class Prototipo1 {
 						eigenfaceTransposta = matrixEigenface_.transpose().getArray();//10000x10
 						Matrix matrixAssinatura_ = new Matrix(matrizAssinatura);
 						Matrix eigenfaceTransposta_ = new Matrix(eigenfaceTransposta);
-						Matrix matrixDePesoPrincipal = eigenfaceTransposta_.times(matrixAssinatura_);
+						Matrix matrixDePesoPrincipal = eigenfaceTransposta_.times(matrixAssinatura_);//10 x 10000 * 10000 x 10
 						matrixDePesoPrincipalArray = matrixDePesoPrincipal.getArray();//10x10
 						
-						remontarFoto(matrixAssinatura_.getMatrix(0, NUMERO_FOTOS-1, 0, 0).getArray());
-					
+						Matrix media_ = new Matrix(media);//10000x1
+						Matrix assinatura_ = new Matrix(matrizAssinatura);//10000x10
+						
+						Matrix matrix = media_.getMatrix(0, NUMERO_LINHAS-1, 0, 0);
+						Matrix matrix2 = assinatura_.getMatrix(0, NUMERO_LINHAS-1, 4, 4);
+						
+						double[][] array = matrix.plus(matrix2).getArray();
+						//remontarFoto(matrixAssinatura_.getMatrix(0, NUMERO_LINHAS-1, 0, 0).getArray());
+						remontarFoto(array);
+						
 						System.out.println("FIM DA FASE TREINAMENTO!!!");
 	}
 
@@ -453,7 +461,7 @@ public class Prototipo1 {
 			
 		}
 		File f2 = null;
-		f2 = new File("/home/hal9000/Pictures/treeArray.jpg");
+		f2 = new File("/home/hal9000/Pictures/ReconhecimentoFacial/editada/treeArray.jpg");
 		try {
 			ImageIO.write(image, "jpg", f2);
 		} catch (IOException e) {

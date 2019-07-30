@@ -18,7 +18,7 @@ public class ImagemUtils {
 		int width0  = img0.getWidth();
 		int height0 = img0.getHeight();
 		
-		double[][] matrizAssinatura = new double[fotosList.size()][width0*height0];
+		double[][] matrizAssinatura = new double[width0*height0][fotosList.size()];
 		
 		for (int m = 0; m < fotosList.size(); m++) {
 			File file = new File(fotosList.get(m).toString());
@@ -54,17 +54,18 @@ public class ImagemUtils {
 	public static double[][] calcularMedia(double[][] matrix) throws IOException {
 		//BufferedImage image = ImageIO.read(file);
 		
-		int numeroFotos = matrix.length;
-		int NUMERO_LINHAS = matrix[0].length;
+		int NUMERO_LINHAS = matrix.length;
+		int NUMERO_COLUNAS = matrix[0].length;
 
-		double[][] media = new double[numeroFotos][NUMERO_LINHAS];
+		double[][] media = new double[NUMERO_LINHAS][NUMERO_COLUNAS];
 		try {
 			for (int i = 0; i < NUMERO_LINHAS; i++) {
-				for (int j = 0; j < numeroFotos; j++) {
+				for (int j = 0; j < NUMERO_COLUNAS; j++) {
 
 					media[i][0] += matrix[i][j];
-					if(j == numeroFotos - 1) {
-						media[i][0] = media[i][0] / numeroFotos;
+					System.out.println(i+"--"+j);
+					if(j == NUMERO_LINHAS - 1) {
+						media[i][0] = media[i][0] / NUMERO_LINHAS;
 					}
 				}
 			}
@@ -84,17 +85,18 @@ public class ImagemUtils {
 
 		int tamanho = fotosList.size();
 
-		double[][] matrizPrincipal = new double[tamanho][width*height];
+		double[][] matrizPrincipal = new double[width*height][tamanho];
 
 		for (int m = 0; m < fotosList.size(); m++) {
 
 			BufferedImage image = ImageIO.read(fotosList.get(m));
 			int k = 0;
 			try {
-				for (int i = 0; i < tamanho; i++) {
-					for (int j = 0; j < tamanho; j++) {
+				for (int i = 0; i < width; i++) {
+					for (int j = 0; j < height; j++) {
 
 						int p2 = image.getRGB(i, j);
+						System.out.println(p2);
 						matrizPrincipal[k][m] = getPixelNormalizado(p2);
 						k++;
 					}
